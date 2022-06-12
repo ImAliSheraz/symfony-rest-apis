@@ -16,6 +16,7 @@ class PostsController extends AbstractController
      */
     public function index(ManagerRegistry $doctrine): Response
     {
+        $response = new Response();
         $posts = $doctrine->getRepository(Posts::class)->findAll();
         $data = [];
         foreach ($posts as $post) {
@@ -25,7 +26,10 @@ class PostsController extends AbstractController
                 'description' => $post->getDescription(),
             ];
         }
-        return $this->json($data);
+        $response->setContent(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     /**
@@ -33,6 +37,7 @@ class PostsController extends AbstractController
      */
     public function show(int $id, ManagerRegistry $doctrine): Response
     {
+        $response = new Response();
         $post =  $doctrine->getRepository(Posts::class)->find($id);
         if (!$post) {
             return $this->json('No project found for id ' . $id, 404);
@@ -42,7 +47,10 @@ class PostsController extends AbstractController
             'title' => $post->getTitle(),
             'description' => $post->getDescription(),
         ];
-        return $this->json($data);
+        $response->setContent(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     /**
@@ -50,27 +58,32 @@ class PostsController extends AbstractController
      */
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
+        $response = new Response();
         $entityManager = $doctrine->getManager();
         $post = new Posts();
         $post->setTitle($request->request->get('title'));
         $post->setDescription($request->request->get('description'));
         $entityManager->persist($post);
         $entityManager->flush();
-        return $this->json('Created new project successfully with id ' . $post->getId());
+        $response->setContent(json_encode('Created new project successfully with id ' . $post->getId()));
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     /**
-     * @Route("/posts/{id}", name="posts_delete", methods={"DELETE"})
+     * @Route("/posts", name="posts_delete", methods={"DELETE"})
      */
-    public function delete(int $id, ManagerRegistry $doctrine): Response
+    public function delete(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
-        $post = $entityManager->getRepository(Posts::class)->find($id);
+        $post_data =  $doctrine->getRepository(Posts::class)->findOneBy([], ['id' => 'DESC']);
+        $post = $entityManager->getRepository(Posts::class)->findOneBy([], ['id' => 'DESC']);
         if (!$post) {
-            return $this->json('No project found for id' . $id, 404);
+            return $this->json('No project found for id' . $post_data->getId(), 404);
         }
         $entityManager->remove($post);
         $entityManager->flush();
-        return $this->json('Deleted a post successfully with id ' . $id);
+        return $this->json('Deleted a post successfully with id ' . $post_data->getId());
     }
 }
