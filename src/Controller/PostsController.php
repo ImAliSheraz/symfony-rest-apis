@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class PostsController extends AbstractController
 {
     /**
-     * @Route("/posts", name="project_index", methods={"GET"})
+     * @Route("/posts", name="posts_index", methods={"GET"})
      */
     public function index(ManagerRegistry $doctrine): Response
     {
@@ -29,7 +29,24 @@ class PostsController extends AbstractController
     }
 
     /**
-     * @Route("/post", name="project_new", methods={"POST"})
+     * @Route("/posts/{id}", name="posts_show", methods={"GET"})
+     */
+    public function show(int $id, ManagerRegistry $doctrine): Response
+    {
+        $post =  $doctrine->getRepository(Posts::class)->find($id);
+        if (!$post) {
+            return $this->json('No project found for id ' . $id, 404);
+        }
+        $data =  [
+            'id' => $post->getId(),
+            'title' => $post->getTitle(),
+            'description' => $post->getDescription(),
+        ];
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/posts", name="posts_new", methods={"POST"})
      */
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
@@ -43,7 +60,7 @@ class PostsController extends AbstractController
     }
 
     /**
-     * @Route("/project/{id}", name="project_delete", methods={"DELETE"})
+     * @Route("/posts/{id}", name="posts_delete", methods={"DELETE"})
      */
     public function delete(int $id, ManagerRegistry $doctrine): Response
     {
