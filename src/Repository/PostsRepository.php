@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Post;
+use App\Entity\Posts;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Post>
+ * @extends ServiceEntityRepository<Posts>
  *
- * @method Post|null find($id, $lockMode = null, $lockVersion = null)
- * @method Post|null findOneBy(array $criteria, array $orderBy = null)
- * @method Post[]    findAll()
- * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Posts|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Posts|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Posts[]    findAll()
+ * @method Posts[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostRepository extends ServiceEntityRepository
+class PostsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Post::class);
+        parent::__construct($registry, Posts::class);
     }
 
-    public function add(Post $entity, bool $flush = false): void
+    public function add(Posts $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class PostRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Post $entity, bool $flush = false): void
+    public function remove(Posts $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class PostRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Post[] Returns an array of Post objects
+//     * @return Posts[] Returns an array of Posts objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class PostRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Post
+//    public function findOneBySomeField($value): ?Posts
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

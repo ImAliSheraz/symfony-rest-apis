@@ -6,16 +6,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use App\Entity\Post;
+use App\Entity\Posts;
+use Doctrine\Persistence\ManagerRegistry;
 
-class PostController extends AbstractController
+class PostsController extends AbstractController
 {
     /**
-     * @Route("/post", name="project_index", methods={"GET"})
+     * @Route("/posts", name="project_index", methods={"GET"})
      */
-    public function index(): Response
+    public function index(ManagerRegistry $doctrine): Response
     {
-        $posts = $this->getDoctrine()->getRepository(Post::class)->findAll();
+        $posts = $doctrine->getRepository(Posts::class)->findAll();
         $data = [];
         foreach ($posts as $post) {
             $data[] = [
@@ -30,10 +31,10 @@ class PostController extends AbstractController
     /**
      * @Route("/post", name="project_new", methods={"POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, ManagerRegistry $doctrine): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $post = new Post();
+        $entityManager = $doctrine->getManager();
+        $post = new Posts();
         $post->setTitle($request->request->get('title'));
         $post->setDescription($request->request->get('description'));
         $entityManager->persist($post);
@@ -44,10 +45,10 @@ class PostController extends AbstractController
     /**
      * @Route("/project/{id}", name="project_delete", methods={"DELETE"})
      */
-    public function delete(int $id): Response
+    public function delete(int $id, ManagerRegistry $doctrine): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $post = $entityManager->getRepository(Post::class)->find($id);
+        $entityManager = $doctrine->getManager();
+        $post = $entityManager->getRepository(Posts::class)->find($id);
         if (!$post) {
             return $this->json('No project found for id' . $id, 404);
         }

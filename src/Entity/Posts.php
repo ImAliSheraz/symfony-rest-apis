@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PostRepository;
+use App\Repository\PostsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostRepository::class)]
-class Post
+#[ORM\Entity(repositoryClass: PostsRepository::class)]
+class Posts
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
