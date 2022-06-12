@@ -65,25 +65,30 @@ class PostsController extends AbstractController
         $post->setDescription($request->request->get('description'));
         $entityManager->persist($post);
         $entityManager->flush();
-        $response->setContent(json_encode('Created new project successfully with id ' . $post->getId()));
+        $response->setContent(json_encode('Created new post successfully'));
         $response->headers->set('Content-Type', 'application/json');
         $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 
     /**
-     * @Route("/posts", name="posts_delete", methods={"DELETE"})
+     * @Route("/posts/{id}", name="posts_delete", methods={"DELETE"})
      */
-    public function delete(ManagerRegistry $doctrine): Response
+    public function delete(int $id, ManagerRegistry $doctrine): Response
     {
+        $response = new Response();
         $entityManager = $doctrine->getManager();
-        $post_data =  $doctrine->getRepository(Posts::class)->findOneBy([], ['id' => 'DESC']);
         $post = $entityManager->getRepository(Posts::class)->findOneBy([], ['id' => 'DESC']);
         if (!$post) {
-            return $this->json('No project found for id' . $post_data->getId(), 404);
+            $response->setContent(json_encode('No post found'));
+            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Access-Control-Allow-Origin', '*');
         }
         $entityManager->remove($post);
         $entityManager->flush();
-        return $this->json('Deleted a post successfully with id ' . $post_data->getId());
+        $response->setContent(json_encode('Deleted a post successfully'));
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 }
